@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\TableExport;
+use App\Http\Requests\TestSetRequest;
 use Illuminate\Http\Request;
 use App\Services\AuthService;
 use App\Services\DataService;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TestController extends Controller
 {
@@ -28,21 +31,22 @@ class TestController extends Controller
         return (redirect(route('index')));
     }
 
-    public function export(Request $request, AuthService $authService)
+    public function export(Request $request, DataService $dataService, AuthService $authService)
     {
-        dd('Функционал экспорта в Excel...');
+        $data = $dataService->getData($authService, true);
+        $export = new TableExport($data);
+        return Excel::download($export, 'table.xlsx');
     }
 
-    public function get(Request $request, DataService $dataService)
+    public function get(Request $request, DataService $dataService, AuthService $authService)
     {
-        $data = $dataService->get();
+        $data = $dataService->getData($authService);
         return response()->json($data);
     }
 
-    public function set(Request $request, DataService $dataService)
+    public function set(TestSetRequest $request, DataService $dataService)
     {
-        $data = $request->post('data', []);
-        $dataService->set($data);
-        return response()->json(['success' => true]);
+        $data = $request->validated();
+        $dataService->set($data['data'] ?? []);
     }
 }

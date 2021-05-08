@@ -29,6 +29,7 @@
                         :fields="tableFields"
                         :fields_labels="labels"
                         :no_hidden_empty_cols="true"
+                        :summ_columns="summColumns"
                     >
                         <template slot="field" slot-scope="props">
                             <div v-if="props.field == 'action'">
