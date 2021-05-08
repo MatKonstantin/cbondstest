@@ -24,6 +24,7 @@ new Vue({
             param2: '',
             param3: '',
         },
+        summColumns: ['param1', 'param2', 'param3'],
     },
     mounted() {
         this.getTableData();
@@ -44,6 +45,9 @@ new Vue({
         setTableData: function () {
             axios.post('/set', {data: this.tableData})
                 .then((response) => {
+                    this.getTableData();
+                })
+                .catch((error) => {
                     this.getTableData();
                 });
         },

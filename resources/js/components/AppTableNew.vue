@@ -471,6 +471,11 @@
                     </tr>
                 </template>
             </template>
+            <tr v-if="showSumm">
+                <template v-for="(item) in columns">
+                    <td>{{ getSumm(item) }}</td>
+                </template>
+            </tr>
             <tr v-show="next" class="openOther">
                 <td v-bind:colspan="colspan" class="center_txt">
                     <div v-bind:style="{height: heightBGNx}">
@@ -538,7 +543,8 @@
             substrings: {type: Array, default: function () { return [] }}, // подстроки
             show_elements: {type: Array, default() { return [] }}, // подстроки
             prestrings: {type: Array, default: function () { return [] }}, // выводится перед строкой
-            reduction: {default: true, type: Boolean}
+            reduction: {default: true, type: Boolean},
+            summ_columns: {type: Array, default: function () { return [] }}, // для каких колонок надо выводить сумму
         },
         data: function () {
             return {
@@ -1093,6 +1099,17 @@
                         return 'send_request_label';
                 }
                 return '';
+            },
+            showSumm: function () {
+                return (this.summ_columns.length && this.body.length);
+            },
+            getSumm: function(key) {
+                if (this.summ_columns.indexOf(key) == -1) return '';
+                let sum = 0;
+                this.body.forEach(function (item) {
+                    sum += !isNaN(item['data'][key]) ? +item['data'][key] : 0;
+                });
+                return sum;
             },
         },
         destroyed: function () {
